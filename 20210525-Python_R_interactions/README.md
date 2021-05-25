@@ -16,7 +16,7 @@ We will see what tools we have to overcome these limitations: from "rpy2" and
 
 # Tools: 
 
-![tools](assets//Python - R interactions and collaborations.png)
+![tools](<assets/Python - R interactions and collaborations.png>)
 
 # Notebooks
 
