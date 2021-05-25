@@ -10,7 +10,30 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-To use python in R you can use the library "reticulate" 
+To use Python in R we can use the library "reticulate".
+
+> The **reticulate** package provides a comprehensive set of tools for
+interoperability between Python and R. The package includes facilities
+for:
+>
+>
+>  - Calling Python from R in a variety of ways including R Markdown,
+>    sourcing Python scripts, importing Python modules, and using Python
+>    interactively within an R session.
+>
+>  - Translation between R and Python objects (for example, between R and
+>    Pandas data frames, or between R matrices and NumPy arrays).
+>
+>  - Flexible binding to different versions of Python including virtual
+>    environments and Conda environments.
+>
+> Reticulate embeds a Python session within your R session, enabling
+> seamless, high-performance interoperability. If you are an R developer
+> that uses Python for some of your work or a member of data science team
+> that uses both languages, reticulate can dramatically streamline your
+> workflow\!
+
+
 
 ## Starting up
 
@@ -19,7 +42,11 @@ To use python in R you can use the library "reticulate"
 # install.packages("reticulate")
 library(reticulate)
 
-# [convert = TRUE] => convert Python objects to R when appropriate
+# We can access directly to Python statements as functions that returns
+# variable that are compatible with R
+
+# [convert = TRUE] => convert Python objects to R when appropriate this is the
+# default option.
 sys <- import("sys", convert = TRUE)
 
 # dollar operator replaces the dot in python:
@@ -30,6 +57,7 @@ os <- import("os", convert=TRUE)
 # the equivalent of sys.executable
 sys$executable
 ```
+
 The executable shows what environment reticulate is using. Checking this variable
 is useful because reticulate tends to automatize many things, and one ends up 
 not knowing which Python environment reticulate is actually using. 
@@ -48,6 +76,23 @@ that are the equivalent of
 conda env list
 conda activate ds
 ``` 
+## Other examples 
+
+```{r}
+my_list <- list(x =1:2 , y=3:5)
+my_dictionary <- dict(my_list)
+my_dictionary
+```
+
+```{r}
+my_dictionary_converted <- dict(my_list, convert = TRUE)
+my_dictionary_converted$x
+```
+
+```{r}
+py_to_r( my_dictionary)
+```
+
 
 ## Use pure Python
 
@@ -75,14 +120,58 @@ s = sns.scatterplot(x="carat", y="price",
                 sizes=(1, 8), linewidth=0,
                 data=diamonds, ax=ax)
                 
-plt.show()
+plt.show();
 ```
 
 However, even if the chunk is in Python, one can retrieve the variables in R. 
 
 ```{r}
 py$diamonds |> head()
+```
 
+Or vice versa
+
+```{R}
+r_string <- "my R string"
+```
+
+```{python}
+f'This is the string from R:  "{r.r_string}"'
+```
+
+
+## Use Python in R console or code
 
 ```
+repl_python()
+my_python_string = "this is now python" 
+print(my_python_string.upper())
+quit
+```
+
+## Install packages 
+
+It is convenient for somebody who wants to stick to pure R (and not only) to
+install packages directly from reticulate, for example:
+
+```{r}
+# if you use conda
+# conda_install(
+#  envname = NULL,
+#  packages,
+#  forge = TRUE,
+#  channel = character(),
+#  pip = FALSE,
+#  pip_options = character(),
+#  pip_ignore_installed = FALSE,
+#  conda = "auto",
+#  python_version = NULL,
+#  ...
+#)
+
+# or 
+# py_install("pandas")
+
+```
+the equivalent of `conda install` and `pip install`. 
 
