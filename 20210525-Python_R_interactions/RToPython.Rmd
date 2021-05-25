@@ -12,9 +12,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 To use Python in R we can use the library "reticulate".
 
+The [documantation](https://rstudio.github.io/reticulate/) states: 
 > The **reticulate** package provides a comprehensive set of tools for
-interoperability between Python and R. The package includes facilities
-for:
+> interoperability between Python and R. The package includes facilities
+> for:
 >
 >
 >  - Calling Python from R in a variety of ways including R Markdown,
@@ -62,14 +63,14 @@ The executable shows what environment reticulate is using. Checking this variabl
 is useful because reticulate tends to automatize many things, and one ends up 
 not knowing which Python environment reticulate is actually using. 
 
-It is possible to be (almost) Python agnostic, avoid any command line:
+It is possible to be (almost) Python agnostic and avoid any command line.
 
 If you use conda you can check what enviroments are available from R, and then
 "activate" the enviroment that reticulate will use
 
 ```{r}
 print(conda_list(conda = "auto"))
-use_condaenv(condaenv = "ds", conda = "auto", required = FALSE)
+use_condaenv(condaenv = "ds", conda = "auto", required = TRUE)
 ```
 that are the equivalent of 
 ```
@@ -81,7 +82,7 @@ conda activate ds
 ```{r}
 my_list <- list(x =1:2 , y=3:5)
 my_dictionary <- dict(my_list)
-my_dictionary
+my_dictionary$x
 ```
 
 ```{r}
@@ -154,8 +155,9 @@ quit
 It is convenient for somebody who wants to stick to pure R (and not only) to
 install packages directly from reticulate, for example:
 
+if you want to use conda the function to install a package is:
 ```{r}
-# if you use conda
+
 # conda_install(
 #  envname = NULL,
 #  packages,
@@ -168,10 +170,12 @@ install packages directly from reticulate, for example:
 #  python_version = NULL,
 #  ...
 #)
-
-# or 
-# py_install("pandas")
-
 ```
+or 
+```{r}
+# py_install("pandas")
+```
+
+
 the equivalent of `conda install` and `pip install`. 
 

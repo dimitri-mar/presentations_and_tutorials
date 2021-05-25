@@ -26,11 +26,13 @@ arrow_info()
 We can easily load the files exchanged with both Parquet and Feather
 
 ```{r}
-planets <- arrow::read_feather("data/planets.feather")
 planets_arrow <- read_feather("data/planets.feather", as_data_frame = FALSE)
-planets |> class()
-planets_arrow |> head()
 planets_arrow |> class()
+planets_arrow |> head()
+
+planets <- arrow::read_feather("data/planets.feather")
+planets |> class()
+planets |> head()
 ```
 it preserves the column types, and even the python categories are correctly 
 represented as factors in R. 
