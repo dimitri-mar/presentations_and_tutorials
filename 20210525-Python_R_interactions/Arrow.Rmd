@@ -11,32 +11,58 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Installation
 In R we can install arrow from cran `install.packages("arrow")`. 
+```{r}
+library(arrow)
+arrow_info()
 
+# install_arrow() # to include further properties like support for S3 or compression
+# install_pyarrow() # to be used with reticulate
+```
+
+
+
+## Get files from Python
 
 We can easily load the files exchanged with both Parquet and Feather
 
 ```{r}
-library(arrow)
-
 planets <- arrow::read_feather("data/planets.feather")
 planets_arrow <- read_feather("data/planets.feather", as_data_frame = FALSE)
 planets |> class()
 planets_arrow |> head()
 planets_arrow |> class()
 ```
+it preserves the column types, and even the python categories are correctly 
+represented as factors in R. 
 
 ```{r}
 library(ggplot2)
 library(lubridate)
+library(tidyverse)
 
-planets |>  ggplot()+ geom_bar(aes(x=method)) + theme_bw() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+planets |>  ggplot()+ geom_bar(aes(x=method)) + theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 planets |> ggplot() + 
   geom_point(aes(x=year, y=mass, color=method), alpha=0.5)+
   scale_y_log10() + theme_bw()
 
-planets |> mutate(year=lubridate::year(year))|>  group_by(year, method) |> tally() |>
-  ggplot(aes(x=year, y=n, fill=method)) + geom_bar(position="stack", stat="identity")+ theme_bw()
+planets |> mutate(year=lubridate::year(year))|>  group_by(year, method) |> count() |>
+  ggplot(aes(x=year, y=n, fill=method)) + 
+  geom_bar(position="stack", stat="identity")+ theme_bw()
 
 ```
+## Operations with arrow
+It is possible to perform computations in arrow directly. It can use the dplyr
+grammar. However not all functions are supported. 
+
+```{r}
+p_arrow <- planets_arrow %>%   mutate(op_mass_ratio = orbital_period / mass)
+p_arrow |> compute() |> collect()
+```
+
+For optimization purposes, the first line does not actually compute the operation,
+`compute()` does. `collect()` instead transforms the arrow back to tibble to be used
+for further visualization. 
+
 
