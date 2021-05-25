@@ -1,0 +1,42 @@
+---
+title: "Apache Arrow"
+author: "Dimitri Marinelli"
+date: "25/5/2021 - #DataForGood - CorrelAid Rhein-Main"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Installation
+In R we can install arrow from cran `install.packages("arrow")`. 
+
+
+We can easily load the files exchanged with both Parquet and Feather
+
+```{r}
+library(arrow)
+
+planets <- arrow::read_feather("data/planets.feather")
+planets_arrow <- read_feather("data/planets.feather", as_data_frame = FALSE)
+planets |> class()
+planets_arrow |> head()
+planets_arrow |> class()
+```
+
+```{r}
+library(ggplot2)
+library(lubridate)
+
+planets |>  ggplot()+ geom_bar(aes(x=method)) + theme_bw() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+planets |> ggplot() + 
+  geom_point(aes(x=year, y=mass, color=method), alpha=0.5)+
+  scale_y_log10() + theme_bw()
+
+planets |> mutate(year=lubridate::year(year))|>  group_by(year, method) |> tally() |>
+  ggplot(aes(x=year, y=n, fill=method)) + geom_bar(position="stack", stat="identity")+ theme_bw()
+
+```
+
